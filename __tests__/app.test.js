@@ -22,4 +22,27 @@ describe("GET /api", () => {
         expect(endpoints).toEqual(endpointsJson);
       });
   });
+  test('404: should return a 404 error if endpoint is not found', () => {
+    return request(app)
+    .get('/api/nope')
+    .expect(404)
+    .then((response)=>{
+      expect(response.body.error).toBe('Endpoint not found')
+    })
+  });
 });
+
+describe('GET /api/topics', () => {
+  test('should return an array of topic objects', () => {
+      return request(app)
+          .get('/api/topics')
+          .expect(200)
+          .then(({ body }) => {
+              expect(Array.isArray(body)).toBe(true);
+              body.forEach((topic) => {
+                  expect(topic).toHaveProperty('slug');
+                  expect(topic).toHaveProperty('description');
+              });
+          });
+  });
+})
