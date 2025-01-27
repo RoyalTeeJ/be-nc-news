@@ -1,9 +1,16 @@
-# Northcoders News API
+## Setup Instructions
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+After cloning the repo, create two `.env` files in the root of the project:
+
+1. `.env.development`
+2. `.env.test`
+
+In both files, add the following line, adjusting for the correct database name:
+
+PGDATABASE=your_database_name_here
+PGDATABASE=your_database_name_here + _test
+
+You can find the database names in the db/setup.sql file.
 
 
-
---- 
-
-This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
+Once these are setup you should be able to connect to the database and run the project.
