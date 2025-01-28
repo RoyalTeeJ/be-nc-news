@@ -1,4 +1,4 @@
-const { fetchTopics, fetchArticleID } = require("./models");
+const { fetchTopics, fetchArticleID, fetchArticles } = require("./models");
 
 function getTopics(request, response, next) {
   fetchTopics()
@@ -17,4 +17,10 @@ function getArticleID(request, response, next) {
     .catch(next);
 }
 
-module.exports = { getTopics, getArticleID };
+function getArticles(request, response, next) {
+  fetchArticles().then((article) => {
+    response.status(200).send(article);
+  });
+}
+
+module.exports = { getTopics, getArticleID, getArticles };
