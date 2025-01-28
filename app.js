@@ -1,17 +1,45 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const endpoints = require('./endpoints.json');
-const {getTopics} = require('./controllers')
+const endpoints = require("./endpoints.json");
+const { getTopics, getArticleID } = require("./controllers");
 
-app.get('/api/topics', getTopics)
+app.use(express.json());
 
-app.get('/api', (request, response)=>{
+app.get("/api/topics", getTopics);
 
-    response.status(200).send({endpoints})
-})
+app.get("/api", (request, response) => {
+  response.status(200).send({ endpoints });
+});
 
-app.all('*', (request,response)=>{
-    response.status(404).send({error: 'Endpoint not found'})
-})
+app.get("/api/articles/:article_id", getArticleID);
 
-module.exports = app
+app.all("*", (request, response) => {
+  response.status(404).send({ error: "Endpoint not found" });
+});
+
+app.use((err, request, response, next) => {
+  if (err.code === "22P02") {
+    response.status(400).send({ message: "Bad Request" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, request, response, next) => {
+  const { message, status } = err;
+  if (message && status) {
+    response.status(status).send({ message });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, request, response, next) => {
+  if (err) {
+    response.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+});
+
+module.exports = app;
