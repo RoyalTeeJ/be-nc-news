@@ -31,8 +31,26 @@ function fetchArticles() {
   });
 }
 
+function fetchcommentsByArticleID(article_id) {
+  let SQLString = `SELECT * FROM comments`;
+  const args = [];
+
+  if (article_id) {
+    SQLString += " WHERE article_id = $1 ORDER BY created_at DESC";
+    args.push(article_id);
+  }
+
+  return db.query(SQLString, args).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({ message: "Not Found", status: 404 });
+    }
+    return response.rows;
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
   fetchArticles,
+  fetchcommentsByArticleID,
 };
