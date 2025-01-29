@@ -98,6 +98,14 @@ function fetchDeletedComment(comment_id) {
   });
 }
 
+function fetchUsers() {
+  let sqlString = `SELECT * FROM users`;
+
+  return db.query(sqlString).then((response) => {
+    return response.rows;
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -106,4 +114,5 @@ module.exports = {
   fetchCommentRefArticleID,
   fetchPatchArticleByArticleID,
   fetchDeletedComment,
+  fetchUsers,
 };
