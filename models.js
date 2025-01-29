@@ -24,9 +24,19 @@ function fetchArticleID(article_id) {
   });
 }
 
-function fetchArticles(sort_by = "created_at", order = "DESC") {
+function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
   let sortedBy = ``;
   let orderBy = ``;
+  let sqlTopic = ``;
+
+  if (topic) {
+    const greenList = ["paper", "cats", "mitch"];
+    if (greenList.includes(topic.toLowerCase())) {
+      sqlTopic = `WHERE topic = '${topic}' `;
+    } else {
+      return Promise.reject({ message: "Invalid topic", status: 400 });
+    }
+  }
 
   if (sort_by) {
     const greenList = [
@@ -53,7 +63,7 @@ function fetchArticles(sort_by = "created_at", order = "DESC") {
     }
   }
 
-  let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
+  let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
 
   return db.query(sqlString).then((response) => {
     return response.rows;
