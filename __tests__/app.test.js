@@ -129,6 +129,48 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  describe("GET /api/articles?queries", () => {
+    test("GET: 200 should return articles sorted by votes in ascending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article[0].votes).toBe(0);
+          expect(body.article).toBeSorted({ key: "votes", ascending: true });
+        });
+    });
+
+    test("GET: 200 should return articles sorted by title in descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&order=desc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article[0].title).toBe(
+            "UNCOVERED: catspiracy to bring down democracy"
+          );
+          expect(body.article).toBeSorted({ key: "title", descending: true });
+        });
+    });
+
+    test("GET: 400 should return 400 for invalid sort_by column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=invalid_column")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.message).toBe("Invalid sort column");
+        });
+    });
+
+    test("GET: 400 should return 400 for invalid order", () => {
+      return request(app)
+        .get("/api/articles?order=invalid_order")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.message).toBe("Invalid order");
+        });
+    });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
