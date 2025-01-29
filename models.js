@@ -48,9 +48,27 @@ function fetchcommentsByArticleID(article_id) {
   });
 }
 
+function fetchCommentRefArticleID(username, body, article_id) {
+  let SQLString = ``;
+  const args = [];
+  if (username && body && article_id) {
+    SQLString +=
+      "INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;";
+    args.push(username, body, article_id);
+  }
+
+  return db.query(SQLString, args).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({ message: "Bad Request", status: 400 });
+    }
+    return response.rows[0];
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
   fetchArticles,
   fetchcommentsByArticleID,
+  fetchCommentRefArticleID,
 };
