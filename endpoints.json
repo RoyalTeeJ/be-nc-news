@@ -85,5 +85,25 @@
       "body": "This is what i live for",
       "article_id": "1"
     }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates the votes of an article by its article_id.",
+    "methods": "PATCH",
+    "requestBody": {
+      "inc_votes": "number (required)"
+    },
+    "exampleRequest": "/api/articles/1",
+    "exampleRequestBody": {
+      "inc_votes": 10
+    },
+    "response": {
+      "article_id": 1,
+      "title": "string",
+      "body": "string",
+      "topic": "string",
+      "created_at": "date",
+      "votes": 10,
+      "article_img_url": "string"
+    }
   }
 }
