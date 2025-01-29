@@ -322,6 +322,18 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
+
+  test("PATCH: 400 should return 400 if the body is missing", () => {
+    const newVote = {};
+
+    return request(app)
+      .patch("/api/articles/banana")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
@@ -344,6 +356,23 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("GET: 200 should return an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        expect(Array.isArray(body.users)).toBe(true);
+        body.users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
       });
   });
 });
