@@ -8,6 +8,7 @@ const {
   getCommentsByArticleID,
   postCommentRefArticleID,
   patchArticleByArticleID,
+  deleteCommentByCommentID,
 } = require("./controllers");
 
 app.use(express.json());
@@ -24,6 +25,7 @@ app.patch("/api/articles/:article_id", patchArticleByArticleID);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 app.post("/api/articles/:article_id/comments", postCommentRefArticleID);
+app.delete("/api/comments/:comment_id", deleteCommentByCommentID);
 
 app.all("*", (request, response) => {
   response.status(404).send({ error: "Endpoint not found" });
