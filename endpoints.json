@@ -30,7 +30,8 @@
     "description": "Fetches all articles, with optional sorting by column and order.",
     "methods": "GET",
     "query_params": {
-      "sort_by": "string (can be article_id, title,author, topic, created_at, votes, defaults to created_at)",
+      "topic": "string (can be football, cooking or coding)",
+      "sort_by": "string (can be article_id, title, author, topic, created_at, votes, defaults to created_at)",
       "order": "string (can be 'asc' or 'desc', defaults to 'desc')"
     },
     "response": {
