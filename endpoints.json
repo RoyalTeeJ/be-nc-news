@@ -105,5 +105,12 @@
       "votes": 10,
       "article_img_url": "string"
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment identified by its comment_id.",
+    "methods": "DELETE",
+    "response": {
+      "status": 204
+    }
   }
 }
