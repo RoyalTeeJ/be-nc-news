@@ -24,8 +24,37 @@ function fetchArticleID(article_id) {
   });
 }
 
-function fetchArticles() {
-  let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`;
+function fetchArticles(sort_by = "created_at", order = "DESC") {
+  let sortedBy = ``;
+  let orderBy = ``;
+
+  if (sort_by) {
+    const greenList = [
+      "article_id",
+      "title",
+      "author",
+      "topic",
+      "created_at",
+      "votes",
+    ];
+    if (greenList.includes(sort_by)) {
+      sortedBy = `${sort_by}`;
+    } else {
+      return Promise.reject({ message: "Invalid sort column", status: 400 });
+    }
+  }
+
+  if (order) {
+    const greenList = ["ASC", "DESC"];
+    if (greenList.includes(order.toUpperCase())) {
+      orderBy = `${order}`;
+    } else {
+      return Promise.reject({ message: "Invalid order", status: 400 });
+    }
+  }
+
+  let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
+
   return db.query(sqlString).then((response) => {
     return response.rows;
   });
