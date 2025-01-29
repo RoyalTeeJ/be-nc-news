@@ -7,6 +7,7 @@ const {
   getArticles,
   getCommentsByArticleID,
   postCommentRefArticleID,
+  patchArticleByArticleID,
 } = require("./controllers");
 
 app.use(express.json());
@@ -19,6 +20,7 @@ app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleID);
 app.get("/api/articles", getArticles);
+app.patch("/api/articles/:article_id", patchArticleByArticleID);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 app.post("/api/articles/:article_id/comments", postCommentRefArticleID);
