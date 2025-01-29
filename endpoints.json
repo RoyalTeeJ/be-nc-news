@@ -112,5 +112,19 @@
     "response": {
       "status": 204
     }
+  },
+  "GET /api/users": {
+    "description": "Fetches all users.",
+    "methods": "GET",
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "username": "icellusedkars",
+          "name": "sam",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        }
+      ]
+    }
   }
 }
