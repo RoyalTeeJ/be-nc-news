@@ -26,6 +26,29 @@
       ]
     }
   },
+  "GET /api/articles?:withQueries": {
+    "description": "Fetches all articles, with optional sorting by column and order.",
+    "methods": "GET",
+    "query_params": {
+      "sort_by": "string (can be article_id, title,author, topic, created_at, votes, defaults to created_at)",
+      "order": "string (can be 'asc' or 'desc', defaults to 'desc')"
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "article_id": "number",
+          "title": "string",
+          "author": "string",
+          "topic": "string",
+          "created_at": "date",
+          "votes": "number",
+          "article_img_url": "string",
+          "comment_count": "number"
+        }
+      ]
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "Gets a specific article by its ID.",
     "method": "GET",
