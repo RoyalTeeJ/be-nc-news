@@ -4,6 +4,7 @@ const {
   fetchArticles,
   fetchcommentsByArticleID,
   fetchCommentRefArticleID,
+  fetchPatchArticleByArticleID,
 } = require("./models");
 
 function getTopics(request, response, next) {
@@ -51,10 +52,22 @@ function postCommentRefArticleID(request, response, next) {
     .catch(next);
 }
 
+function patchArticleByArticleID(request, response, next) {
+  const { article_id } = request.params;
+  const { inc_votes } = request.body;
+
+  fetchPatchArticleByArticleID(inc_votes, article_id)
+    .then((addedVotes) => {
+      response.status(200).send({ addedVotes });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getTopics,
   getArticleID,
   getArticles,
   getCommentsByArticleID,
   postCommentRefArticleID,
+  patchArticleByArticleID,
 };
