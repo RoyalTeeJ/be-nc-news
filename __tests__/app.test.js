@@ -157,8 +157,8 @@ describe("GET /api/articles", () => {
       return request(app)
         .get("/api/articles?sort_by=invalid_column")
         .expect(400)
-        .then((result) => {
-          expect(result.body.message).toBe("Invalid sort column");
+        .then((response) => {
+          expect(response.body.message).toBe("Invalid sort column");
         });
     });
 
@@ -166,8 +166,53 @@ describe("GET /api/articles", () => {
       return request(app)
         .get("/api/articles?order=invalid_order")
         .expect(400)
-        .then((result) => {
-          expect(result.body.message).toBe("Invalid order");
+        .then((response) => {
+          expect(response.body.message).toBe("Invalid order");
+        });
+    });
+
+    test("GET: 200 should return articles filtered by topic 'mitch'", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.length).toBe(4);
+          body.article.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+
+    test("GET: 200 should return articles filtered by topic 'cats'", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.length).toBe(1);
+          body.article.forEach((article) => {
+            expect(article.topic).toBe("cats");
+          });
+        });
+    });
+
+    test("GET: 200 should return articles filtered by topic 'paper'", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.length).toBe(0);
+          body.article.forEach((article) => {
+            expect(article.topic).toBe("paper");
+          });
+        });
+    });
+
+    test("GET: 400 should return 400 for invalid topic", () => {
+      return request(app)
+        .get("/api/articles?topic=invalid_topic")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.message).toBe("Invalid topic");
         });
     });
   });
