@@ -65,10 +65,29 @@ function fetchCommentRefArticleID(username, body, article_id) {
   });
 }
 
+function fetchPatchArticleByArticleID(inc_votes, article_id) {
+  let sqlString = ``;
+  const args = [];
+
+  if (inc_votes && article_id) {
+    sqlString +=
+      "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;";
+    args.push(inc_votes, article_id);
+  }
+
+  return db.query(sqlString, args).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({ message: "Not Found", status: 404 });
+    }
+    return response.rows[0];
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
   fetchArticles,
   fetchcommentsByArticleID,
   fetchCommentRefArticleID,
+  fetchPatchArticleByArticleID,
 };
