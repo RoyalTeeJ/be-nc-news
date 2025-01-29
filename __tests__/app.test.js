@@ -181,3 +181,86 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST: 201 should add a comment to the given article and return the posted comment with the correct values", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is what i live for",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment.votes).toBe(0);
+        expect(body.comment.article_id).toBe(1);
+        expect(newComment.username).toEqual(body.comment.author);
+        expect(newComment.body).toEqual(body.comment.body);
+        expect(body.comment).toHaveProperty("comment_id");
+        expect(body.comment).toHaveProperty("votes");
+        expect(body.comment).toHaveProperty("created_at");
+        expect(body.comment).toHaveProperty("author");
+        expect(body.comment).toHaveProperty("body");
+        expect(body.comment).toHaveProperty("article_id");
+      });
+  });
+
+  test("POST: 400 should return 400 if username or body is missing", () => {
+    const newComment = { username: "butter_bridge" };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+
+  test("POST: 400 should return 400 if article_id is non-numeric", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is what i live for",
+    };
+
+    return request(app)
+      .post("/api/articles/banana/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+
+  test("POST: 404 should return 404 if article_id does not exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is what i live for",
+    };
+
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Not Found");
+      });
+  });
+
+  test("POST: 404 should return 404 if username does not exist", () => {
+    const newComment = {
+      username: "nonexistentuser",
+      body: "This is what i live for",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Not Found");
+      });
+  });
+});
