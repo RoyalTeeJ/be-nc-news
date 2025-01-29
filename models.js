@@ -68,7 +68,9 @@ function fetchCommentRefArticleID(username, body, article_id) {
 function fetchPatchArticleByArticleID(inc_votes, article_id) {
   let sqlString = ``;
   const args = [];
-
+  if (inc_votes === undefined) {
+    return Promise.reject({ message: "Bad Request", status: 400 });
+  }
   if (inc_votes && article_id) {
     sqlString +=
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;";
@@ -98,6 +100,14 @@ function fetchDeletedComment(comment_id) {
   });
 }
 
+function fetchUsers() {
+  let sqlString = `SELECT * FROM users`;
+
+  return db.query(sqlString).then((response) => {
+    return response.rows;
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -106,4 +116,5 @@ module.exports = {
   fetchCommentRefArticleID,
   fetchPatchArticleByArticleID,
   fetchDeletedComment,
+  fetchUsers,
 };
