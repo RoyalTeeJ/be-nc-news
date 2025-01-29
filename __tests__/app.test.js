@@ -307,7 +307,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newVote)
       .expect(404)
       .then((response) => {
-        expect(response.body.message).toBe("Not Found");
+        expect(response.body.message).toBe("Article Not Found");
       });
   });
 
@@ -317,6 +317,30 @@ describe("PATCH /api/articles/:article_id", () => {
     return request(app)
       .patch("/api/articles/banana")
       .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("DELETE: 204 should delete the comment given by id and return status 204 with no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+
+  test("DELETE: 404 should return 404 if comment_id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Comment Not Found");
+      });
+  });
+
+  test("DELETE: 400 should return 400 if comment_id is not a number", () => {
+    return request(app)
+      .delete("/api/comments/banana")
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
