@@ -6,6 +6,7 @@ const {
   getArticleID,
   getArticles,
   getCommentsByArticleID,
+  postCommentRefArticleID,
 } = require("./controllers");
 
 app.use(express.json());
@@ -20,6 +21,7 @@ app.get("/api/articles/:article_id", getArticleID);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
+app.post("/api/articles/:article_id/comments", postCommentRefArticleID);
 
 app.all("*", (request, response) => {
   response.status(404).send({ error: "Endpoint not found" });
@@ -28,6 +30,8 @@ app.all("*", (request, response) => {
 app.use((err, request, response, next) => {
   if (err.code === "22P02") {
     response.status(400).send({ message: "Bad Request" });
+  } else if (err.code === "23503") {
+    response.status(404).send({ message: "Not Found" });
   } else {
     next(err);
   }
@@ -44,6 +48,7 @@ app.use((err, request, response, next) => {
 
 app.use((err, request, response, next) => {
   if (err) {
+    console.log(err, "<<<<<this error has not been handled");
     response.status(500).send({
       message: "Internal Server Error",
     });
