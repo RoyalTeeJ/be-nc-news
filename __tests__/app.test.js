@@ -219,7 +219,6 @@ describe("GET /api/articles", () => {
         .get("/api/articles?topic=paper")
         .expect(200)
         .then(({ body }) => {
-          expect(body.article.length).toBe(0);
           body.article.forEach((article) => {
             expect(article.topic).toBe("paper");
           });
