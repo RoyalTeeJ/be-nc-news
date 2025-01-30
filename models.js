@@ -32,17 +32,18 @@ function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
   let orderBy = ``;
   let sqlTopic = ``;
 
-  if (topic) {
-    const greenList = ["paper", "cats", "mitch"];
-    if (greenList.includes(topic.toLowerCase())) {
-      sqlTopic = `WHERE topic = '${topic}' `;
-    } else {
-      return Promise.reject({ message: "Invalid topic", status: 400 });
-    }
-  }
+  const getSQLString = db.query("SELECT slug FROM topics").then(({ rows }) => {
+    const topicGreenList = rows.map((topics) => topics.slug);
 
-  if (sort_by) {
-    const greenList = [
+    if (topic) {
+      if (topicGreenList.includes(topic.toLowerCase())) {
+        sqlTopic = `WHERE topic = '${topic}' `;
+      } else {
+        return Promise.reject({ message: "Invalid topic", status: 400 });
+      }
+    }
+
+    const sortByGreenList = [
       "article_id",
       "title",
       "author",
@@ -50,25 +51,25 @@ function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
       "created_at",
       "votes",
     ];
-    if (greenList.includes(sort_by)) {
+    if (sortByGreenList.includes(sort_by)) {
       sortedBy = `${sort_by}`;
     } else {
       return Promise.reject({ message: "Invalid sort column", status: 400 });
     }
-  }
 
-  if (order) {
-    const greenList = ["ASC", "DESC"];
-    if (greenList.includes(order.toUpperCase())) {
+    const orderByGreenList = ["ASC", "DESC"];
+
+    if (orderByGreenList.includes(order.toUpperCase())) {
       orderBy = `${order}`;
     } else {
       return Promise.reject({ message: "Invalid order", status: 400 });
     }
-  }
 
-  let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
+    let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
 
-  return db.query(sqlString).then((response) => {
+    return db.query(sqlString);
+  });
+  return getSQLString.then((response) => {
     return response.rows;
   });
 }
