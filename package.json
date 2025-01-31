@@ -5,10 +5,10 @@
   "main": "listen.js",
   "scripts": {
     "start": "node listen.js",
-    "seed-prod": "NODE_ENV=production npm run seed",
+    "seed-prod": "NODE_ENV=production run seed",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest",
+    "test": "NODE_ENV=test jest",
     "prepare": "husky install"
   },
   "repository": {
