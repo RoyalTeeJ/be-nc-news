@@ -9,7 +9,7 @@ function fetchTopics() {
 
 function fetchArticleID(article_id) {
   let sqlString = `
-    SELECT articles.article_id, articles.author, articles.title, articles.body, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id
+    SELECT articles.article_id, articles.author, articles.title, articles.body, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) ::INT AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id
   `;
   const args = [];
 
@@ -21,9 +21,7 @@ function fetchArticleID(article_id) {
     if (response.rows.length === 0) {
       return Promise.reject({ message: "Not Found", status: 404 });
     }
-    const article = response.rows[0];
-    article.comment_count = Number(article.comment_count);
-    return article;
+    return response.rows[0];
   });
 }
 
