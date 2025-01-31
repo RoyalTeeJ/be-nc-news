@@ -68,7 +68,6 @@ function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
     return db.query(sqlString);
   });
   return getSQLString.then((response) => {
-    console.log(response.rows);
     return response.rows;
   });
 }
