@@ -63,11 +63,12 @@ function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
       return Promise.reject({ message: "Invalid order", status: 400 });
     }
 
-    let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
+    let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) ::INT AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
 
     return db.query(sqlString);
   });
   return getSQLString.then((response) => {
+    console.log(response.rows);
     return response.rows;
   });
 }
