@@ -65,7 +65,7 @@
       "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700"
     }
   },
-  "GET /api/articles/:article_id/comments": {
+  "GET /api/:article_id/comments": {
     "description": "Returns an array of comments for a given article. The comments are sorted by created_at in descending order.",
     "methods": "GET",
     "queryParams": 1,
@@ -89,7 +89,7 @@
       }
     ]
   },
-  "POST /api/articles/:article_id/comments": {
+  "POST /api/:article_id/comments": {
     "description": "Adds a new comment to a given article.",
     "methods": "POST",
     "requestBody": {
