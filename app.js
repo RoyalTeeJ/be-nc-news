@@ -1,34 +1,25 @@
 const express = require("express");
 const app = express();
 const endpoints = require("./endpoints.json");
-const {
-  getTopics,
-  getArticleID,
-  getArticles,
-  getCommentsByArticleID,
-  postCommentRefArticleID,
-  patchArticleByArticleID,
-  deleteCommentByCommentID,
-  getUsers,
-} = require("./controllers");
+const { getUsers } = require("./controllers");
+const topicsRouter = require("./routers/topicsRouter");
+const articlesRouter = require("./routers/articlesRouter");
+const commentsRouter = require("./routers/commentsRouter");
+const usersRouter = require("./routers/usersRouter");
 
 app.use(express.json());
+
+app.use("/api/topics", topicsRouter);
+
+app.use("/api/articles", articlesRouter);
+
+app.use("/api", commentsRouter);
+
+app.use("/api/users", usersRouter);
 
 app.get("/api", (request, response) => {
   response.status(200).send({ endpoints });
 });
-
-app.get("/api/topics", getTopics);
-
-app.get("/api/articles/:article_id", getArticleID);
-app.get("/api/articles", getArticles);
-app.patch("/api/articles/:article_id", patchArticleByArticleID);
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
-app.post("/api/articles/:article_id/comments", postCommentRefArticleID);
-app.delete("/api/comments/:comment_id", deleteCommentByCommentID);
-
-app.get("/api/users", getUsers);
 
 app.all("*", (request, response) => {
   response.status(404).send({ error: "Endpoint not found" });
