@@ -150,5 +150,16 @@
         }
       ]
     }
+  },
+  "GET /api/users/:username": {
+    "description": "Fetch a user by their username.",
+    "methods": "GET",
+    "response": {
+      "user": {
+        "username": "string",
+        "avatar_url": "string",
+        "name": "string"
+      }
+    }
   }
 }
