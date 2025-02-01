@@ -7,6 +7,7 @@ const {
   fetchPatchArticleByArticleID,
   fetchDeletedComment,
   fetchUsers,
+  fetchUsersByUsername,
 } = require("./models");
 
 function getTopics(request, response, next) {
@@ -84,6 +85,15 @@ function getUsers(request, response, next) {
     .catch(next);
 }
 
+function getUsersByUsername(request, response, next) {
+  const { username } = request.params;
+  fetchUsersByUsername(username)
+    .then((user) => {
+      response.status(200).send({ user });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getTopics,
   getArticleID,
@@ -93,4 +103,5 @@ module.exports = {
   patchArticleByArticleID,
   deleteCommentByCommentID,
   getUsers,
+  getUsersByUsername,
 };
