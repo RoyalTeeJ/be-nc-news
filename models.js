@@ -149,6 +149,23 @@ function fetchUsers() {
   });
 }
 
+function fetchUsersByUsername(username) {
+  const sqlString = "SELECT * FROM users WHERE users.username = $1";
+
+  const args = [];
+
+  if (username) {
+    args.push(username);
+  }
+
+  return db.query(sqlString, args).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({ message: "User not found", status: 404 });
+    }
+    return response.rows[0];
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -158,4 +175,5 @@ module.exports = {
   fetchPatchArticleByArticleID,
   fetchDeletedComment,
   fetchUsers,
+  fetchUsersByUsername,
 };
