@@ -481,3 +481,26 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("GET: 200 should return a user object when the username is found", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user.username).toBe("butter_bridge");
+        expect(body.user).toHaveProperty("username");
+        expect(body.user).toHaveProperty("name");
+        expect(body.user).toHaveProperty("avatar_url");
+      });
+  });
+
+  test("GET: 404 should return an error when the user is not found", () => {
+    return request(app)
+      .get("/api/users/nonexistentuser")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ message: "User not found" });
+      });
+  });
+});
