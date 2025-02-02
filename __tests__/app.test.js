@@ -870,3 +870,37 @@ describe("POST /api/topics", () => {
       });
   });
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+  test("DELETE: 204 should delete the article and return status 204 with no content, and comments should also be deleted", () => {
+    return request(app)
+      .delete(`/api/articles/1`)
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .get(`/api/articles/1/comments`)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.message).toBe("Not Found");
+          });
+      });
+  });
+
+  test("DELETE: 404 should return 404 if article_id does not exist", () => {
+    return request(app)
+      .delete(`/api/articles/9999`)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Not found");
+      });
+  });
+
+  test("DELETE: 400 should return 400 if article_id is not a number", () => {
+    return request(app)
+      .delete("/api/articles/banana")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+});
