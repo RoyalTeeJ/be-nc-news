@@ -321,7 +321,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments.length).toBe(11);
+        expect(body.comments.length).toBe(10);
         expect(Array.isArray(body.comments)).toBe(true);
         body.comments.forEach((comment) => {
           expect(comment.article_id).toBe(1);
@@ -363,6 +363,55 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
       });
+  });
+  describe("GET /api/articles/:article_id/comments (pagination)", () => {
+    test("GET: 200 should return paginated comments for a specific article", () => {
+      return request(app)
+        .get(`/api/articles/1/comments?limit=5&page=1`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toBeInstanceOf(Array);
+          expect(body.comments.length).toBeLessThanOrEqual(5);
+          body.comments.forEach((comment) => {
+            expect(comment).toHaveProperty("total_count");
+          });
+        });
+    });
+
+    test("GET: 400 should return 400 if invalid article_id", () => {
+      return request(app)
+        .get("/api/articles/invalid_id/comments?limit=5&page=1")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad Request");
+        });
+    });
+
+    test("GET: 404 should return 404 if no comments exist for a given article", () => {
+      return request(app)
+        .get("/api/articles/9999/comments?limit=5&page=1")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Not Found");
+        });
+    });
+
+    test("GET: 400 should return 400 if invalid query parameters", () => {
+      return request(app)
+        .get(`/api/articles/1/comments?limit=abc&page=1`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid query parameters");
+        });
+    });
+    test("GET: 400 should return 400 for invalid limit", () => {
+      return request(app)
+        .get(`/api/articles/1/comments?limit=5&page= -1`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid query parameters");
+        });
+    });
   });
 });
 
