@@ -250,6 +250,25 @@ function fetchPostArticle(
   });
 }
 
+function fetchPostTopics(slug, description) {
+  const args = [];
+
+  if (slug && description) {
+    args.push(slug, description);
+  } else {
+    return Promise.reject({
+      message: "Bad Request - slug and description are required",
+      status: 400,
+    });
+  }
+
+  sqlString = `INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING *;`;
+
+  return db.query(sqlString, args).then((response) => {
+    return response.rows[0];
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -262,4 +281,5 @@ module.exports = {
   fetchUsersByUsername,
   fetchPatchCommentByCommentID,
   fetchPostArticle,
+  fetchPostTopics,
 };
