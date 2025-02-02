@@ -6,7 +6,10 @@ const {
   postArticle,
   getCommentsByArticleID,
   postCommentRefArticleID,
+  deleteArticle,
 } = require("../controllers");
+
+router.delete("/:article_id", deleteArticle);
 
 router.get("/:article_id", getArticleID);
 
