@@ -166,6 +166,34 @@ function fetchUsersByUsername(username) {
   });
 }
 
+function fetchPatchCommentByCommentID(inc_votes, comment_id) {
+  let sqlString = ``;
+  const args = [];
+
+  if (inc_votes === undefined) {
+    return Promise.reject({ message: "inc_votes is required", status: 400 });
+  } else if (typeof inc_votes !== "number") {
+    return Promise.reject({
+      message: "inc_votes must be a number",
+      status: 400,
+    });
+  }
+
+  if (inc_votes && comment_id) {
+    sqlString =
+      "UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;";
+    args.push(inc_votes);
+    args.push(comment_id);
+  }
+
+  return db.query(sqlString, args).then((response) => {
+    if (response.rows.length === 0) {
+      return Promise.reject({ message: "Comment not found", status: 404 });
+    }
+    return response.rows[0];
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -176,4 +204,5 @@ module.exports = {
   fetchDeletedComment,
   fetchUsers,
   fetchUsersByUsername,
+  fetchPatchCommentByCommentID,
 };

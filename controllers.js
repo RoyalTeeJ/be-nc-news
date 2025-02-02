@@ -8,6 +8,7 @@ const {
   fetchDeletedComment,
   fetchUsers,
   fetchUsersByUsername,
+  fetchPatchCommentByCommentID,
 } = require("./models");
 
 function getTopics(request, response, next) {
@@ -94,6 +95,16 @@ function getUsersByUsername(request, response, next) {
     .catch(next);
 }
 
+function patchCommentByCommentID(request, response, next) {
+  const { inc_votes } = request.body;
+  const { comment_id } = request.params;
+  fetchPatchCommentByCommentID(inc_votes, comment_id)
+    .then((comment) => {
+      response.status(200).send({ comment });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getTopics,
   getArticleID,
@@ -104,4 +115,5 @@ module.exports = {
   deleteCommentByCommentID,
   getUsers,
   getUsersByUsername,
+  patchCommentByCommentID,
 };

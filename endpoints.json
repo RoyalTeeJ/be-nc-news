@@ -65,7 +65,7 @@
       "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700"
     }
   },
-  "GET /api/:article_id/comments": {
+  "GET /api/comments/:article_id/comments": {
     "description": "Returns an array of comments for a given article. The comments are sorted by created_at in descending order.",
     "methods": "GET",
     "queryParams": 1,
@@ -89,7 +89,7 @@
       }
     ]
   },
-  "POST /api/:article_id/comments": {
+  "POST /api/comments/:article_id/comments": {
     "description": "Adds a new comment to a given article.",
     "methods": "POST",
     "requestBody": {
@@ -160,6 +160,25 @@
         "avatar_url": "string",
         "name": "string"
       }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates the votes for a specific comment by comment_id.",
+    "methods": "PATCH",
+    "requestBody": {
+      "inc_votes": "number (required) - The number of votes to increase or decrease the comment's vote count."
+    },
+    "exampleRequest": "/api/comments/1",
+    "exampleRequestBody": {
+      "inc_votes": 5
+    },
+    "response": {
+      "comment_id": 1,
+      "body": "string",
+      "article_id": "number",
+      "author": "string",
+      "votes": 5,
+      "created_at": "date"
     }
   }
 }

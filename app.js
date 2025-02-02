@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const endpoints = require("./endpoints.json");
-const { getUsers } = require("./controllers");
 const topicsRouter = require("./routers/topicsRouter");
 const articlesRouter = require("./routers/articlesRouter");
 const commentsRouter = require("./routers/commentsRouter");
@@ -13,7 +12,7 @@ app.use("/api/topics", topicsRouter);
 
 app.use("/api/articles", articlesRouter);
 
-app.use("/api", commentsRouter);
+app.use("/api/comments", commentsRouter);
 
 app.use("/api/users", usersRouter);
 
