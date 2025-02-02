@@ -2,7 +2,7 @@ const {
   fetchTopics,
   fetchArticleID,
   fetchArticles,
-  fetchcommentsByArticleID,
+  fetchCommentsByArticleID,
   fetchCommentRefArticleID,
   fetchPatchArticleByArticleID,
   fetchDeletedComment,
@@ -40,7 +40,8 @@ function getArticles(request, response, next) {
 
 function getCommentsByArticleID(request, response, next) {
   const { article_id } = request.params;
-  fetchcommentsByArticleID(article_id)
+  const { limit, page } = request.query;
+  fetchCommentsByArticleID(article_id, limit, page)
     .then((comments) => {
       response.status(200).send({ comments });
     })
