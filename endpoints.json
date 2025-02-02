@@ -235,5 +235,21 @@
       "created_at": "date",
       "comment_count": "number"
     }
+  },
+  "POST /api/topics": {
+    "description": "Allows you to add a new topic.",
+    "request_body": {
+      "slug": "string (required) - the unique identifier for the topic",
+      "description": "string (required) - a short description of the topic"
+    },
+    "responses": {
+      "201": {
+        "description": "The topic was successfully created and added to the database.",
+        "body": {
+          "slug": "string",
+          "description": "string"
+        }
+      }
+    }
   }
 }
