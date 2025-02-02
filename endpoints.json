@@ -85,6 +85,17 @@
     "description": "Returns an array of comments for a given article. The comments are sorted by created_at in descending order.",
     "methods": "GET",
     "queryParams": 1,
+    "queries": [
+      {
+        "name": "limit",
+        "description": "Limits the number of comments per page (default is 10)."
+      },
+      {
+        "name": "p",
+        "description": "Specifies the page number to fetch (default is 1)."
+      }
+    ],
+    "example": "/api/articles/:article_id/comments?limit=10&p=1",
     "exampleRequest": "/api/articles/1/comments",
     "response": [
       {
