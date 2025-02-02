@@ -251,5 +251,21 @@
         }
       }
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Allows the deletion of an article and its associated comments based on the article ID.",
+    "request": {
+      "params": {
+        "article_id": "integer (required) - the unique ID of the article to be deleted"
+      }
+    },
+    "responses": {
+      "204": {
+        "description": "The article and its associated comments were successfully deleted."
+      },
+      "404": {
+        "description": "Not Found - The article with the specified ID does not exist."
+      }
+    }
   }
 }
