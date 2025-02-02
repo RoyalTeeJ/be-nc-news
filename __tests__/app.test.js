@@ -236,10 +236,10 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe("GET /api/:article_id/comments", () => {
+describe("GET /api/comments/:article_id/comments", () => {
   test("GET: 200 should return an array of comments for the given article_id", () => {
     return request(app)
-      .get("/api/1/comments")
+      .get("/api/comments/1/comments")
       .expect(200)
       .then(({ body }) => {
         expect(body.comments.length).toBe(11);
@@ -258,7 +258,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("GET: 200 should return comments sorted by created_at in descending order", () => {
     return request(app)
-      .get("/api/1/comments")
+      .get("/api/comments/1/comments")
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toBeSorted({
@@ -270,7 +270,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("GET: 404 should return 404 if no comments exist for a given article", () => {
     return request(app)
-      .get("/api/9999/comments")
+      .get("/api/comments/9999/comments")
       .expect(404)
       .then((response) => {
         expect(response.body.message).toBe("Not Found");
@@ -279,7 +279,7 @@ describe("GET /api/:article_id/comments", () => {
 
   test("GET: 400 should return 400 if article_id is invalid non-numeric", () => {
     return request(app)
-      .get("/api/randomWord/comments")
+      .get("/api/comments/randomWord/comments")
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
@@ -287,7 +287,7 @@ describe("GET /api/:article_id/comments", () => {
   });
 });
 
-describe("POST /api/:article_id/comments", () => {
+describe("POST /api/comments/:article_id/comments", () => {
   test("POST: 201 should add a comment to the given article and return the posted comment with the correct values", () => {
     const newComment = {
       username: "butter_bridge",
@@ -295,7 +295,7 @@ describe("POST /api/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/1/comments")
+      .post("/api/comments/1/comments")
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
@@ -316,7 +316,7 @@ describe("POST /api/:article_id/comments", () => {
     const newComment = { username: "butter_bridge" };
 
     return request(app)
-      .post("/api/1/comments")
+      .post("/api/comments/1/comments")
       .send(newComment)
       .expect(400)
       .then((response) => {
@@ -331,7 +331,7 @@ describe("POST /api/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/banana/comments")
+      .post("/api/comments/banana/comments")
       .send(newComment)
       .expect(400)
       .then((response) => {
@@ -346,7 +346,7 @@ describe("POST /api/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/9999/comments")
+      .post("/api/comments/9999/comments")
       .send(newComment)
       .expect(404)
       .then((response) => {
@@ -361,7 +361,7 @@ describe("POST /api/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/1/comments")
+      .post("/api/comments/1/comments")
       .send(newComment)
       .expect(404)
       .then((response) => {
@@ -501,6 +501,73 @@ describe("GET /api/users/:username", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({ message: "User not found" });
+      });
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("should update the votes of a comment by the given vote increment", () => {
+    const newVote = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveProperty("comment_id");
+        expect(body.comment.comment_id).toBe(1);
+        expect(body.comment).toHaveProperty("votes");
+        expect(body.comment.votes).toBeGreaterThan(0);
+      });
+  });
+
+  test("should return a 400 error when the body does not contain inc_votes", () => {
+    const newVote = {};
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ message: "inc_votes is required" });
+      });
+  });
+
+  test("should return a 404 error when the comment_id is invalid (does not exist)", () => {
+    const newVote = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/comments/99999")
+      .send(newVote)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ message: "Comment not found" });
+      });
+  });
+
+  test("should return a 400 error when inc_votes is not a number", () => {
+    const newVote = { inc_votes: "invalid" };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          message: "inc_votes must be a number",
+        });
+      });
+  });
+
+  test("PATCH: 400 should return 400 if article_id is not a number", () => {
+    const newVote = { inc_votes: 5 };
+
+    return request(app)
+      .patch("/api/comments/banana")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
       });
   });
 });
