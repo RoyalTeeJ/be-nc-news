@@ -9,6 +9,7 @@ const {
   fetchUsers,
   fetchUsersByUsername,
   fetchPatchCommentByCommentID,
+  fetchPostArticle,
 } = require("./models");
 
 function getTopics(request, response, next) {
@@ -105,6 +106,15 @@ function patchCommentByCommentID(request, response, next) {
     .catch(next);
 }
 
+function postArticle(request, response, next) {
+  const { author, title, body, topic, article_img_url } = request.body;
+  fetchPostArticle(author, title, body, topic, article_img_url)
+    .then((article) => {
+      response.status(201).send({ article });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getTopics,
   getArticleID,
@@ -116,4 +126,5 @@ module.exports = {
   getUsers,
   getUsersByUsername,
   patchCommentByCommentID,
+  postArticle,
 };
