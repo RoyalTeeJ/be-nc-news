@@ -12,6 +12,7 @@ const {
   fetchPatchCommentByCommentID,
   fetchPostArticle,
   fetchPostTopics,
+  fetchDeleteArticle,
 } = require("./models");
 
 function getTopics(request, response, next) {
@@ -73,7 +74,6 @@ function patchArticleByArticleID(request, response, next) {
 
 function deleteCommentByCommentID(request, response, next) {
   const { comment_id } = request.params;
-
   fetchDeletedComment(comment_id)
     .then(() => {
       response.status(204).send();
@@ -134,6 +134,15 @@ function postTopics(request, response, next) {
   });
 }
 
+function deleteArticle(request, response, next) {
+  const { article_id } = request.params;
+  fetchDeleteArticle(article_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch(next);
+}
+
 module.exports = {
   getTopics,
   getArticleID,
@@ -147,4 +156,5 @@ module.exports = {
   patchCommentByCommentID,
   postArticle,
   postTopics,
+  deleteArticle,
 };
