@@ -1,3 +1,4 @@
+const db = require("./db/connection.js");
 const {
   fetchTopics,
   fetchArticleID,
@@ -10,6 +11,7 @@ const {
   fetchUsersByUsername,
   fetchPatchCommentByCommentID,
   fetchPostArticle,
+  fetchPostTopics,
 } = require("./models");
 
 function getTopics(request, response, next) {
@@ -115,6 +117,23 @@ function postArticle(request, response, next) {
     .catch(next);
 }
 
+function postTopics(request, response, next) {
+  const { slug, description } = request.body;
+
+  db.query("SELECT * FROM topics WHERE slug = $1", [slug]).then(({ rows }) => {
+    if (rows.length > 0) {
+      return response.status(409).send({
+        message: "Conflict - Topic with this slug already exists",
+      });
+    }
+    fetchPostTopics(slug, description)
+      .then((topic) => {
+        response.status(201).send({ topic });
+      })
+      .catch(next);
+  });
+}
+
 module.exports = {
   getTopics,
   getArticleID,
@@ -127,4 +146,5 @@ module.exports = {
   getUsersByUsername,
   patchCommentByCommentID,
   postArticle,
+  postTopics,
 };

@@ -805,3 +805,68 @@ describe("POST /api/articles", () => {
       });
   });
 });
+
+describe("POST /api/topics", () => {
+  test("POST: 201 should create a new topic", () => {
+    const newTopic = {
+      slug: "technology",
+      description: "All things related to technology",
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.topic).toHaveProperty("slug", "technology");
+        expect(body.topic).toHaveProperty(
+          "description",
+          "All things related to technology"
+        );
+      });
+  });
+
+  test("POST: 400 should return error when slug is missing", () => {
+    const newTopic = { description: "All things related to technology" };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          "Bad Request - slug and description are required"
+        );
+      });
+  });
+
+  test("POST: 400 should return error when description is missing", () => {
+    const newTopic = { slug: "technology" };
+
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          "Bad Request - slug and description are required"
+        );
+      });
+  });
+
+  test("POST: 409 should return error when topic with same slug already exists", () => {
+    const newTopic = {
+      slug: "cats",
+      description: "All things related to cats",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(409)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          "Conflict - Topic with this slug already exists"
+        );
+      });
+  });
+});
