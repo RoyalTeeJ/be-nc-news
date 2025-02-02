@@ -571,3 +571,109 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("POST: 201 should create a new article", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New Trends in Node.js",
+      body: "This article discusses the latest trends in Node.js development.",
+      topic: "cats",
+      article_img_url:
+        "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_id");
+        expect(body.article).toHaveProperty("author", "butter_bridge");
+        expect(body.article).toHaveProperty("title", "New Trends in Node.js");
+        expect(body.article).toHaveProperty(
+          "body",
+          "This article discusses the latest trends in Node.js development."
+        );
+        expect(body.article).toHaveProperty("votes", 0);
+        expect(body.article).toHaveProperty("created_at");
+        expect(body.article).toHaveProperty("comment_count", 0);
+        expect(body.article).toHaveProperty(
+          "article_img_url",
+          "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+        );
+      });
+  });
+
+  test("POST: 400 should return 400 if required fields are missing", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      body: "This article discusses the latest trends in Node.js development.",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          "Bad Request - author, title, body, and topic are required"
+        );
+      });
+  });
+
+  test("POST: 400 should return 404 if the topic does not exist", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New Trends in Node.js",
+      body: "This article discusses the latest trends in Node.js development.",
+      topic: "nonexistent_topic",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Not Found");
+      });
+  });
+
+  test("POST: 201 should create a new article with the default image URL if not provided", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New Trends in Node.js",
+      body: "This article discusses the latest trends in Node.js development.",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_img_url");
+        expect(body.article.article_img_url).toBe(
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+      });
+  });
+
+  test("POST: 400 should return 404 if the author does not exist", () => {
+    const newArticle = {
+      author: "nonexistantAuthor",
+      title: "New Trends in Node.js",
+      body: "This article discusses the latest trends in Node.js development.",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Not Found");
+      });
+  });
+});

@@ -180,5 +180,33 @@
       "votes": 5,
       "created_at": "date"
     }
+  },
+  "POST /api/articles": {
+    "description": "Adds a new article to the database. If the article image URL is not provided, a default URL will be used. The response includes the newly added article with its ID, vote count, creation date, and initial comment count of 0.",
+    "requestBody": {
+      "author": "string (required)",
+      "title": "string (required)",
+      "body": "string (required)",
+      "topic": "string (required)",
+      "article_img_url": "string (optional, defaults to a default URL if not provided)"
+    },
+    "exampleRequestBody": {
+      "author": "johndoe",
+      "title": "A Great New Article",
+      "body": "This is the content of the article.",
+      "topic": "technology",
+      "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+    },
+    "response": {
+      "article_id": "number",
+      "title": "string",
+      "topic": "string",
+      "author": "string",
+      "body": "string",
+      "article_img_url": "string",
+      "votes": "number",
+      "created_at": "date",
+      "comment_count": "number"
+    }
   }
 }

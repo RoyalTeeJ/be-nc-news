@@ -194,6 +194,34 @@ function fetchPatchCommentByCommentID(inc_votes, comment_id) {
   });
 }
 
+function fetchPostArticle(
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+) {
+  const args = [];
+
+  if (author && title && body && topic) {
+    args.push(title);
+    args.push(topic);
+    args.push(author);
+    args.push(body);
+    args.push(article_img_url);
+  } else {
+    return Promise.reject({
+      message: "Bad Request - author, title, body, and topic are required",
+      status: 400,
+    });
+  }
+  let sqlString = `INSERT INTO articles (title, topic, author, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *, (SELECT COUNT(comment_id) FROM comments WHERE article_id = articles.article_id) ::INT AS comment_count`;
+
+  return db.query(sqlString, args).then((response) => {
+    return response.rows[0];
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -205,4 +233,5 @@ module.exports = {
   fetchUsers,
   fetchUsersByUsername,
   fetchPatchCommentByCommentID,
+  fetchPostArticle,
 };
