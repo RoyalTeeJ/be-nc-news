@@ -110,7 +110,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article.length).toBe(5);
+        expect(body.article.length).toBe(10);
         expect(Array.isArray(body.article)).toBe(true);
         body.article.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
@@ -165,9 +165,7 @@ describe("GET /api/articles", () => {
         .get("/api/articles?sort_by=title&order=desc")
         .expect(200)
         .then(({ body }) => {
-          expect(body.article[0].title).toBe(
-            "UNCOVERED: catspiracy to bring down democracy"
-          );
+          expect(body.article[0].title).toBe("Z");
           expect(body.article).toBeSorted({ key: "title", descending: true });
         });
     });
@@ -195,7 +193,7 @@ describe("GET /api/articles", () => {
         .get("/api/articles?topic=mitch")
         .expect(200)
         .then(({ body }) => {
-          expect(body.article.length).toBe(4);
+          expect(body.article.length).toBe(10);
           body.article.forEach((article) => {
             expect(article.topic).toBe("mitch");
           });
@@ -231,6 +229,87 @@ describe("GET /api/articles", () => {
         .expect(400)
         .then((response) => {
           expect(response.body.message).toBe("Invalid topic");
+        });
+    });
+  });
+
+  describe("GET /api/articles(pagination)", () => {
+    test("GET: 200 should return a paginated list of articles with default limit (10) and page (1)", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toHaveLength(10);
+          body.article.forEach((articles) => {
+            expect(articles).toHaveProperty("total_count");
+            expect(typeof articles.total_count).toBe("number");
+          });
+        });
+    });
+
+    test("GET: 200 should return a paginated list of articles with custom limit and page", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ limit: 3, page: 2 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toHaveLength(3);
+          body.article.forEach((articles) => {
+            expect(articles).toHaveProperty("total_count");
+            expect(articles.total_count).toBeGreaterThanOrEqual(3);
+          });
+        });
+    });
+
+    test("GET: 200 should return articles filtered by topic", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ topic: "mitch", limit: 5, page: 1 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toHaveLength(5);
+        });
+    });
+
+    test("GET: 400 should return 400 for invalid page number", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ page: -1 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid query parameters");
+        });
+    });
+
+    test("GET: 400 should return 400 for invalid limit", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ limit: "invalid" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid query parameters");
+        });
+    });
+
+    test("GET: 400 should return 400 for invalid topic", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ topic: "nonexistent_topic", limit: 5, page: 1 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid topic");
+        });
+    });
+
+    test("GET: 200 should return articles sorted by votes in ascending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ sort_by: "votes", order: "ASC", limit: 5, page: 1 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toBeInstanceOf(Array);
+          expect(body.article).toHaveLength(5);
+          expect(body.article).toBeSorted({ key: "votes", ascending: true });
         });
     });
   });
