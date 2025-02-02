@@ -1,7 +1,5 @@
 const router = require("express").Router();
 const {
-  getCommentsByArticleID,
-  postCommentRefArticleID,
   deleteCommentByCommentID,
   patchCommentByCommentID,
 } = require("../controllers");
