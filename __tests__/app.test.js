@@ -315,10 +315,10 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe("GET /api/comments/:article_id/comments", () => {
+describe("GET /api/articles/:article_id/comments", () => {
   test("GET: 200 should return an array of comments for the given article_id", () => {
     return request(app)
-      .get("/api/comments/1/comments")
+      .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
         expect(body.comments.length).toBe(11);
@@ -337,7 +337,7 @@ describe("GET /api/comments/:article_id/comments", () => {
 
   test("GET: 200 should return comments sorted by created_at in descending order", () => {
     return request(app)
-      .get("/api/comments/1/comments")
+      .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toBeSorted({
@@ -349,7 +349,7 @@ describe("GET /api/comments/:article_id/comments", () => {
 
   test("GET: 404 should return 404 if no comments exist for a given article", () => {
     return request(app)
-      .get("/api/comments/9999/comments")
+      .get("/api/articles/9999/comments")
       .expect(404)
       .then((response) => {
         expect(response.body.message).toBe("Not Found");
@@ -358,7 +358,7 @@ describe("GET /api/comments/:article_id/comments", () => {
 
   test("GET: 400 should return 400 if article_id is invalid non-numeric", () => {
     return request(app)
-      .get("/api/comments/randomWord/comments")
+      .get("/api/articles/randomWord/comments")
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
@@ -366,7 +366,7 @@ describe("GET /api/comments/:article_id/comments", () => {
   });
 });
 
-describe("POST /api/comments/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("POST: 201 should add a comment to the given article and return the posted comment with the correct values", () => {
     const newComment = {
       username: "butter_bridge",
@@ -374,7 +374,7 @@ describe("POST /api/comments/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/comments/1/comments")
+      .post("/api/articles/1/comments")
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
@@ -395,7 +395,7 @@ describe("POST /api/comments/:article_id/comments", () => {
     const newComment = { username: "butter_bridge" };
 
     return request(app)
-      .post("/api/comments/1/comments")
+      .post("/api/articles/1/comments")
       .send(newComment)
       .expect(400)
       .then((response) => {
@@ -410,7 +410,7 @@ describe("POST /api/comments/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/comments/banana/comments")
+      .post("/api/articles/banana/comments")
       .send(newComment)
       .expect(400)
       .then((response) => {
@@ -425,7 +425,7 @@ describe("POST /api/comments/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/comments/9999/comments")
+      .post("/api/articles/9999/comments")
       .send(newComment)
       .expect(404)
       .then((response) => {
@@ -440,7 +440,7 @@ describe("POST /api/comments/:article_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/comments/1/comments")
+      .post("/api/articles/1/comments")
       .send(newComment)
       .expect(404)
       .then((response) => {
