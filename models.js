@@ -25,7 +25,13 @@ function fetchArticleID(article_id) {
   });
 }
 
-function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
+function fetchArticles(
+  sort_by = "created_at",
+  order = "DESC",
+  topic,
+  limit = 10,
+  page = 1
+) {
   let sortedBy = ``;
   let orderBy = ``;
   let sqlTopic = ``;
@@ -63,9 +69,18 @@ function fetchArticles(sort_by = "created_at", order = "DESC", topic) {
       return Promise.reject({ message: "Invalid order", status: 400 });
     }
 
-    let sqlString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) ::INT AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy};`;
+    if (isNaN(limit) || isNaN(page) || limit <= 0 || page <= 0) {
+      return Promise.reject({
+        message: "Invalid query parameters",
+        status: 400,
+      });
+    }
 
-    return db.query(sqlString);
+    const offset = (page - 1) * limit;
+
+    let sqlString = `SELECT articles.*, COUNT(comments.comment_id) ::INT AS comment_count, (SELECT COUNT(*) FROM articles ${sqlTopic}) ::INT AS total_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy} LIMIT $1 OFFSET $2;`;
+
+    return db.query(sqlString, [limit, offset]);
   });
   return getSQLString.then((response) => {
     return response.rows;

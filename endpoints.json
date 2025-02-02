@@ -11,7 +11,23 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [
+      "author",
+      "topic",
+      "sort_by",
+      "order",
+      "limit",
+      "page",
+      {
+        "name": "limit",
+        "description": "Limits the number of articles per page (default is 10)."
+      },
+      {
+        "name": "p",
+        "description": "Specifies the page number to fetch (default is 1)."
+      }
+    ],
+    "example": "/api/articles?limit=10&p=1",
     "exampleResponse": {
       "articles": [
         {
