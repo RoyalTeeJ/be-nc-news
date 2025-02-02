@@ -30,8 +30,8 @@ function getArticleID(request, response, next) {
 }
 
 function getArticles(request, response, next) {
-  const { sort_by, order, topic } = request.query;
-  fetchArticles(sort_by, order, topic)
+  const { sort_by, order, topic, limit, page } = request.query;
+  fetchArticles(sort_by, order, topic, limit, page)
     .then((article) => {
       response.status(200).send({ article });
     })
@@ -61,7 +61,6 @@ function postCommentRefArticleID(request, response, next) {
 function patchArticleByArticleID(request, response, next) {
   const { article_id } = request.params;
   const { inc_votes } = request.body;
-
   fetchPatchArticleByArticleID(inc_votes, article_id)
     .then((addedVotes) => {
       response.status(200).send({ addedVotes });
