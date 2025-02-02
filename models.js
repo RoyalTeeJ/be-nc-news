@@ -87,14 +87,27 @@ function fetchArticles(
   });
 }
 
-function fetchcommentsByArticleID(article_id) {
-  let sqlString = `SELECT * FROM comments`;
+function fetchCommentsByArticleID(article_id, limit = 10, page = 1) {
+  let articleString = ``;
   const args = [];
 
   if (article_id) {
-    sqlString += " WHERE article_id = $1 ORDER BY created_at DESC";
+    articleString += "WHERE article_id = $1 ORDER BY created_at DESC";
     args.push(article_id);
   }
+
+  if (isNaN(limit) || isNaN(page) || limit <= 0 || page <= 0) {
+    return Promise.reject({
+      message: "Invalid query parameters",
+      status: 400,
+    });
+  }
+
+  const offset = (page - 1) * limit;
+  args.push(limit);
+  args.push(offset);
+
+  let sqlString = `SELECT comments.*, (SELECT COUNT(*)::INT FROM comments WHERE article_id = $1) AS total_count FROM comments ${articleString} LIMIT $2 OFFSET $3;`;
 
   return db.query(sqlString, args).then((response) => {
     if (response.rows.length === 0) {
@@ -241,7 +254,7 @@ module.exports = {
   fetchTopics,
   fetchArticleID,
   fetchArticles,
-  fetchcommentsByArticleID,
+  fetchCommentsByArticleID,
   fetchCommentRefArticleID,
   fetchPatchArticleByArticleID,
   fetchDeletedComment,
