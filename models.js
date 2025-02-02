@@ -269,6 +269,28 @@ function fetchPostTopics(slug, description) {
   });
 }
 
+function fetchDeleteArticle(article_id) {
+  const deleteCommentsQuery = "DELETE FROM comments WHERE article_id = $1";
+
+  const deleteArticleQuery = "DELETE FROM articles WHERE article_id = $1;";
+
+  const args = [];
+  if (article_id) {
+    args.push(article_id);
+  }
+
+  return db
+    .query(deleteCommentsQuery, args)
+    .then(() => {
+      return db.query(deleteArticleQuery, args);
+    })
+    .then((response) => {
+      if (response.rowCount === 0) {
+        return Promise.reject({ message: "Not found", status: 404 });
+      }
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleID,
@@ -282,4 +304,5 @@ module.exports = {
   fetchPatchCommentByCommentID,
   fetchPostArticle,
   fetchPostTopics,
+  fetchDeleteArticle,
 };
