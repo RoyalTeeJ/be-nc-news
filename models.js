@@ -54,6 +54,7 @@ function fetchArticles(
       "topic",
       "created_at",
       "votes",
+      "comment_count",
     ];
     if (sortByGreenList.includes(sort_by)) {
       sortedBy = `${sort_by}`;
@@ -78,7 +79,9 @@ function fetchArticles(
 
     const offset = (page - 1) * limit;
 
-    let sqlString = `SELECT articles.*, COUNT(comments.comment_id) ::INT AS comment_count, (SELECT COUNT(*) FROM articles ${sqlTopic}) ::INT AS total_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY articles.${sortedBy} ${orderBy} LIMIT $1 OFFSET $2;`;
+    let sqlString = `SELECT articles.*, COUNT(comments.comment_id) ::INT AS comment_count, (SELECT COUNT(*) FROM articles ${sqlTopic}) ::INT AS total_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id ${sqlTopic}GROUP BY articles.article_id ORDER BY ${
+      sortedBy === "comment_count" ? "comment_count" : `articles.${sortedBy}`
+    } ${orderBy} LIMIT $1 OFFSET $2;`;
 
     return db.query(sqlString, [limit, offset]);
   });

@@ -170,6 +170,18 @@ describe("GET /api/articles", () => {
         });
     });
 
+    test("GET: 200 should return articles sorted by title in descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=comment_count&order=desc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toBeSorted({
+            key: "comment_count",
+            descending: true,
+          });
+        });
+    });
+
     test("GET: 400 should return 400 for invalid sort_by column", () => {
       return request(app)
         .get("/api/articles?sort_by=invalid_column")
