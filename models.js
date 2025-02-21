@@ -54,6 +54,7 @@ function fetchArticles(
       "topic",
       "created_at",
       "votes",
+      "comment_count",
     ];
     if (sortByGreenList.includes(sort_by)) {
       sortedBy = `${sort_by}`;
